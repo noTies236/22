@@ -1,0 +1,37 @@
+# Diretórios de build
+Debug/
+Release/
+x64/
+x86/
+ipch/
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.idb
+*.res
+.vs/
+# Arquivos de log e temporários
+*.log
+*.tlog
+*.tmp
+*.bak
+
+# Arquivos do Visual Studio
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Arquivos gerados por compilador/linker
+*.exe
+*.dll
+*.lib
+*.exp
+
+# Sistema operacional
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
