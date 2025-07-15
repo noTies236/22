@@ -140,6 +140,9 @@
     <ClInclude Include="GLAD\include\glad\glad.h" />
     <ClInclude Include="GLAD\include\KHR\khrplatform.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
