@@ -30,5 +30,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="Shaders\triangleVert.glsl" />
+    <None Include="Shaders\triangleFrag.glsl" />
+    <None Include="Shaders\squareVert.glsl" />
+    <None Include="Shaders\squareFrag.glsl" />
   </ItemGroup>
 </Project>

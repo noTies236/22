@@ -2,6 +2,8 @@
 #include "SDL2/SDL.h"
 #include "GLAD/glad.h"
 #include "vector"
+#include "fstream"
+#include "string"
 
 // globals
 int gScreenWidth = 740;
@@ -12,26 +14,37 @@ SDL_GLContext gOpenGLContext = nullptr;
 
 bool gQuit = false;
 
+// VBO
+GLuint gVertexBufferObject = 0;
+GLuint gVertexBufferForSquare = 0;
+
 //VAO
 GLuint gVertexArrayObject = 0;
-GLuint gVertexBufferObject = 0;
+GLuint gVertexArrayForSquare = 0;
+
+// Program
 GLuint gGraphicsPipelineShaderProgram = 0;
+GLuint gSquareProgram = 0;
 
-const std::string gVertexShaderSource =
-	"#version 410 core\n"
-	"in vec3 position;\n"
-	"void main()\n"
-	"{\n"
-	"	gl_Position = vec4(position.x, position.y, position.z, 1.0f);\n"
-	"}\n";
+std::string LoadShaderAsString(const std::string& filename);
+std::string LoadShaderAsString(const std::string& filename)
+{
+	std::string result = "";
+	std::string line = "";
+	std::fstream myFile(filename.c_str());
+	
+	if (myFile.is_open()) {
+		while (std::getline(myFile, line)) {
+			result += line + "\n";
+		}
 
-const std::string gFragmentShaderSource =
-	"#version 410 core\n"
-	"out vec4 color;\n"
-	"void main()\n"
-	"{\n"
-	"	color = vec4(0.6f, 0.5f, 1.8f, 0.7f);\n"
-	"}\n";
+		myFile.close();
+	}
+
+	std::cout << result << "\n";
+
+	return result;
+}
 
 GLuint CompileShader(GLuint type, const std::string& source) {
 	GLuint shaderObject{};
@@ -66,11 +79,20 @@ GLuint CreateShaderProgram(const std::string& vertexShaderSource, const std::str
 
 	glValidateProgram(programObject);
 
+	glDeleteShader(myVertexShader);
+	glDeleteShader(myFragmentShader);
+
 	return programObject;
 }
 
 void CreateGraphicsPipeline() {
-	gGraphicsPipelineShaderProgram = CreateShaderProgram(gVertexShaderSource, gFragmentShaderSource);
+	std::string vertexShaderSource = LoadShaderAsString("./Shaders/triangleVert.glsl");
+	std::string fragmentShaderSource = LoadShaderAsString("./Shaders/triangleFrag.glsl");
+	gGraphicsPipelineShaderProgram = CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
+
+	std::string vertexShaderSquareSource = LoadShaderAsString("./Shaders/squareVert.glsl");
+	std::string fragmentShaderSquareSource = LoadShaderAsString("./Shaders/squareFrag.glsl");
+	gSquareProgram = CreateShaderProgram(vertexShaderSquareSource, fragmentShaderSquareSource); 
 }
 
 void GetOpenGlVersionInfo();
@@ -84,9 +106,9 @@ void GetOpenGlVersionInfo() {
 void VertexSpecification();
 void VertexSpecification() {
 	std::vector<GLfloat> vertexPosition{
-		-0.8f, -0.8f, 0.0f,
-		 0.8f, -0.8f, 0.0f,
-		 0.0f,  0.8f, 0.0f,
+		-0.3f, -0.3f, 0.0f,
+		 0.3f, -0.3f, 0.0f,
+		 0.0f,  0.3f, 0.0f,
 	};
 
 	glCreateVertexArrays(1, &gVertexArrayObject);
@@ -104,6 +126,41 @@ void VertexSpecification() {
 	glVertexAttribPointer(0,
 						  3,
 						  GL_FLOAT,	
+						  GL_FALSE,
+						  0,
+						  (void*)0);
+
+	glBindVertexArray(0);
+	glDisableVertexAttribArray(0);
+}
+
+void vertexDefineSquare();
+void vertexDefineSquare() 
+{
+	std::vector<GLfloat> vertexSquare{
+		 0.1f,  0.3f, 0.0f,
+		 0.1f,  0.1f, 0.0f,
+		 0.3f,  0.1f, 0.0f,
+
+		 0.1f,  0.3f, 0.0f,
+		 0.3f,  0.1f, 0.0f,
+		 0.3f,  0.3f, 0.0f,
+	};
+
+	glCreateVertexArrays(1, &gVertexArrayForSquare);
+	glBindVertexArray(gVertexArrayForSquare);
+
+	glCreateBuffers(1, &gVertexBufferForSquare);
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferForSquare);
+	glBufferData(GL_ARRAY_BUFFER,
+				 vertexSquare.size() * sizeof(GLfloat),
+				 vertexSquare.data(),
+				 GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0,
+						  3,
+					      GL_FLOAT,
 						  GL_FALSE,
 						  0,
 						  (void*)0);
@@ -165,15 +222,20 @@ void PreDraw() {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glViewport(0,0, gScreenWidth, gScreenHight);
-	//glClearColor(1.0f, 0.2f, 1.0f, 1.0f);
-
-	glUseProgram(gGraphicsPipelineShaderProgram);
+	glClearColor(0.0f, 0.4f, 0.7f, 0.5f);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
 void Draw() {
-	glBindVertexArray(gVertexArrayObject); 
+	glUseProgram(gGraphicsPipelineShaderProgram);
+	glBindVertexArray(gVertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	glUseProgram(gSquareProgram); 
+	glBindVertexArray(gVertexArrayForSquare);
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferForSquare);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void MainLoop()
@@ -204,6 +266,7 @@ int main(int argc, char* argv[])
 	InitializeProgram(); 
 
 	VertexSpecification();
+	vertexDefineSquare();
 
 	CreateGraphicsPipeline();
 
