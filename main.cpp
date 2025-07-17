@@ -107,9 +107,9 @@ void VertexSpecification();
 void VertexSpecification() {
 	std::vector<GLfloat> vertexPosition {
 		// vertex               color      
-		-0.3f,   -0.3f, 0.0f,   1.0f,  0.0f, 0.0f,
-		 0.3f,   -0.3f, 0.0f,   0.0f,  1.0f, 0.0f,
-		 0.0f,    0.3f, 0.0f,   0.0f,  0.0f, 1.0f,
+		-0.7f,   -0.7f, 0.0f,   1.0f,  0.0f, 0.0f,
+		 0.7f,   -0.7f, 0.0f,   0.0f,  1.0f, 0.0f,
+		 0.0f,    0.7f, 0.0f,   0.0f,  0.0f, 1.0f,
 	};
 
 	glCreateVertexArrays(1, &gVertexArrayObject);
@@ -154,29 +154,29 @@ void vertexDefineSquare();
 void vertexDefineSquare() 
 {
 	std::vector<GLfloat> vertexSquare{
-		 0.1f,  0.3f, 0.0f,
-		 0.1f,  0.1f, 0.0f,
-		 0.3f,  0.1f, 0.0f,
-
-		 // 0.0f,  1.0f, 0.0f,
-		 // -1.0f, -1.0f, 0.0f,
-		 // 1.0f,  -1.0f, 0.0f,6
-
-		 0.1f,  0.3f, 0.0f,
-		 0.3f,  0.1f, 0.0f,
-		 0.3f,  0.3f, 0.0f,
+		 // vertex			   colors
+		 0.1f,  0.3f, 0.0f,	   0.5f,  0.0f, 1.0f,
+		 0.1f,  0.1f, 0.0f,	   0.5f,  0.0f, 0.0f,
+		 0.3f,  0.1f, 0.0f,	   0.0f,  0.0f, 0.0f,
+		 0.1f,  0.3f, 0.0f,    0.5f,  0.0f, 1.0f,
+		 0.3f,  0.1f, 0.0f,	   0.5f,  0.0f, 0.0f,
+		 0.3f,  0.3f, 0.0f,	   0.0f,  0.0f, 0.0f,
 	};
 
-	std::vector<GLfloat> vertexColors{
-		 0.5f,  0.0f, 1.0f,
-		 0.5f,  0.0f, 0.0f,
-		 0.0f,  0.0f, 0.0f,
+	glCreateVertexArrays(1, &gVertexArrayForSquare);
+	glBindVertexArray(gVertexArrayForSquare);
 
-		 0.5f,  0.0f, 1.0f,
-		 0.5f,  0.0f, 0.0f,
-		 0.0f,  0.0f, 0.0f,
-	};
+	glCreateBuffers(1, &gVertexBufferForSquare);
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexArrayForSquare);
+	glBufferData(GL_ARRAY_BUFFER, vertexSquare.size() * sizeof(GLfloat), vertexSquare.data(), GL_STATIC_DRAW);
 
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+	#if 0
 	glCreateVertexArrays(1, &gVertexArrayForSquare);
 	glBindVertexArray(gVertexArrayForSquare);
 
@@ -193,6 +193,8 @@ void vertexDefineSquare()
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+
+	#endif 
 
 	#if 0 
 		// went wrong, back later.
