@@ -1,6 +1,9 @@
 #version 410 core
+
+in vec3 tcolor;
 out vec4 color;
+
 void main()
 {
-    color = vec4(4.0f, 0.2f, 0.2f, 0.7f);
+    color = vec4(tcolor, 0.5f);
 }

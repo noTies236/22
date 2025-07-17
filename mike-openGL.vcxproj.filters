@@ -34,5 +34,6 @@
     <None Include="Shaders\triangleFrag.glsl" />
     <None Include="Shaders\squareVert.glsl" />
     <None Include="Shaders\squareFrag.glsl" />
+    <None Include="Shaders\testVert.glsl" />
   </ItemGroup>
 </Project>

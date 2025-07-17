@@ -17,6 +17,8 @@ bool gQuit = false;
 // VBO
 GLuint gVertexBufferObject = 0;
 GLuint gVertexBufferForSquare = 0;
+GLuint gColor = 0;
+GLuint squareColorBuffer = 0;
 
 //VAO
 GLuint gVertexArrayObject = 0;
@@ -40,8 +42,6 @@ std::string LoadShaderAsString(const std::string& filename)
 
 		myFile.close();
 	}
-
-	std::cout << result << "\n";
 
 	return result;
 }
@@ -105,10 +105,11 @@ void GetOpenGlVersionInfo() {
 
 void VertexSpecification();
 void VertexSpecification() {
-	std::vector<GLfloat> vertexPosition{
-		-0.3f, -0.3f, 0.0f,
-		 0.3f, -0.3f, 0.0f,
-		 0.0f,  0.3f, 0.0f,
+	std::vector<GLfloat> vertexPosition {
+		// vertex               color      
+		-0.3f,   -0.3f, 0.0f,   1.0f,  0.0f, 0.0f,
+		 0.3f,   -0.3f, 0.0f,   0.0f,  1.0f, 0.0f,
+		 0.0f,    0.3f, 0.0f,   0.0f,  0.0f, 1.0f,
 	};
 
 	glCreateVertexArrays(1, &gVertexArrayObject);
@@ -122,13 +123,28 @@ void VertexSpecification() {
 			     vertexPosition.data(), 
 			     GL_STATIC_DRAW);
 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0,
-						  3,
-						  GL_FLOAT,	
-						  GL_FALSE,
-						  0,
-						  (void*)0);
+	 
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(sizeof(GL_FLOAT) * 3));
+	glEnableVertexAttribArray(1);
+
+	#if 0
+		glGenBuffers(1, &gColor);
+		glBindBuffer(GL_ARRAY_BUFFER ,gColor);
+		glBufferData(GL_ARRAY_BUFFER,
+					vertexColors.size() * sizeof(GLfloat),
+					vertexColors.data(),
+					GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1,
+							  3,
+							  GL_FLOAT,
+							  GL_FALSE,
+							  0,
+							  (void*)0);
+	#endif 
 
 	glBindVertexArray(0);
 	glDisableVertexAttribArray(0);
@@ -142,9 +158,23 @@ void vertexDefineSquare()
 		 0.1f,  0.1f, 0.0f,
 		 0.3f,  0.1f, 0.0f,
 
+		 // 0.0f,  1.0f, 0.0f,
+		 // -1.0f, -1.0f, 0.0f,
+		 // 1.0f,  -1.0f, 0.0f,6
+
 		 0.1f,  0.3f, 0.0f,
 		 0.3f,  0.1f, 0.0f,
 		 0.3f,  0.3f, 0.0f,
+	};
+
+	std::vector<GLfloat> vertexColors{
+		 0.5f,  0.0f, 1.0f,
+		 0.5f,  0.0f, 0.0f,
+		 0.0f,  0.0f, 0.0f,
+
+		 0.5f,  0.0f, 1.0f,
+		 0.5f,  0.0f, 0.0f,
+		 0.0f,  0.0f, 0.0f,
 	};
 
 	glCreateVertexArrays(1, &gVertexArrayForSquare);
@@ -152,18 +182,32 @@ void vertexDefineSquare()
 
 	glCreateBuffers(1, &gVertexBufferForSquare);
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferForSquare);
-	glBufferData(GL_ARRAY_BUFFER,
-				 vertexSquare.size() * sizeof(GLfloat),
-				 vertexSquare.data(),
-				 GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertexSquare.size() * sizeof(GLfloat), vertexSquare.data(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0,
-						  3,
-					      GL_FLOAT,
-						  GL_FALSE,
-						  0,
-						  (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glCreateBuffers(1, &squareColorBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, squareColorBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertexColors.size() * sizeof(GLfloat), vertexColors.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+
+	#if 0 
+		// went wrong, back later.
+		glBindVertexArray(gVertexArrayObject);
+		glBindBuffer(GL_ARRAY_BUFFER, gColor);
+	
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1,
+								3, 
+			GL_FLOAT,
+			GL_FALSE,
+			0,
+			(void*)0);
+
+	#endif 
 
 	glBindVertexArray(0);
 	glDisableVertexAttribArray(0);
@@ -227,14 +271,14 @@ void PreDraw() {
 }
 
 void Draw() {
-	glUseProgram(gGraphicsPipelineShaderProgram);
-	glBindVertexArray(gVertexArrayObject);
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-
-	glUseProgram(gSquareProgram); 
-	glBindVertexArray(gVertexArrayForSquare);
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferForSquare);
+	glUseProgram(gGraphicsPipelineShaderProgram); 
+	glBindVertexArray(gVertexArrayObject); 
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject); 
+	glDrawArrays(GL_TRIANGLES, 0, 3); 
+	 
+	glUseProgram(gSquareProgram);  
+	glBindVertexArray(gVertexArrayForSquare); 
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferForSquare); 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 

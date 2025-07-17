@@ -144,6 +144,7 @@
     <None Include=".gitignore" />
     <None Include="Shaders\squareFrag.glsl" />
     <None Include="Shaders\squareVert.glsl" />
+    <None Include="Shaders\testVert.glsl" />
     <None Include="Shaders\triangleFrag.glsl" />
     <None Include="Shaders\triangleVert.glsl" />
   </ItemGroup>
