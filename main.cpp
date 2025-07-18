@@ -107,9 +107,15 @@ void VertexSpecification();
 void VertexSpecification() {
 	std::vector<GLfloat> vertexPosition {
 		// vertex               color      
-		-0.7f,   -0.7f, 0.0f,   1.0f,  0.0f, 0.0f,
-		 0.7f,   -0.7f, 0.0f,   0.0f,  1.0f, 0.0f,
-		 0.0f,    0.7f, 0.0f,   0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f, 0.0f,   1.0f,  0.0f, 0.0f,
+		 0.5f, -0.5f, 0.0f,   0.0f,  1.0f, 0.0f,
+		-0.5f,  0.5f, 0.0f,   0.0f,  0.0f, 1.0f,
+		
+		 0.5f, -0.5f, 0.0f,   0.0f,  1.0f, 0.0f,
+		-0.5f,	0.5f, 0.0f,   0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f, 0.0f,   0.0f,  0.0f, 1.0f,
+		
+		 /* Winding order: is the direction that our vertices are layout. */
 	};
 
 	glCreateVertexArrays(1, &gVertexArrayObject);
@@ -268,7 +274,7 @@ void PreDraw() {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glViewport(0,0, gScreenWidth, gScreenHight);
-	glClearColor(0.0f, 0.4f, 0.7f, 0.5f);
+	glClearColor(0.1f, 0.2f, 0.2f, 0.7f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
@@ -276,7 +282,8 @@ void Draw() {
 	glUseProgram(gGraphicsPipelineShaderProgram); 
 	glBindVertexArray(gVertexArrayObject); 
 	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject); 
-	glDrawArrays(GL_TRIANGLES, 0, 3); 
+	glDrawArrays(GL_TRIANGLES, 0, 6); 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	 
 	glUseProgram(gSquareProgram);  
 	glBindVertexArray(gVertexArrayForSquare); 
