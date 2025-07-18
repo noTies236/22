@@ -24,6 +24,9 @@ GLuint squareColorBuffer = 0;
 GLuint gVertexArrayObject = 0;
 GLuint gVertexArrayForSquare = 0;
 
+// IBO
+GLuint gIboSquare = 0;
+
 // Program
 GLuint gGraphicsPipelineShaderProgram = 0;
 GLuint gSquareProgram = 0;
@@ -104,56 +107,42 @@ void GetOpenGlVersionInfo() {
 }
 
 void VertexSpecification();
-void VertexSpecification() {
+void VertexSpecification() 
+{
 	std::vector<GLfloat> vertexPosition {
-		// vertex               color      
-		-0.5f, -0.5f, 0.0f,   1.0f,  0.0f, 0.0f,
-		 0.5f, -0.5f, 0.0f,   0.0f,  1.0f, 0.0f,
-		-0.5f,  0.5f, 0.0f,   0.0f,  0.0f, 1.0f,
-		
-		 0.5f, -0.5f, 0.0f,   0.0f,  1.0f, 0.0f,
-		-0.5f,	0.5f, 0.0f,   0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f, 0.0f,   0.0f,  0.0f, 1.0f,
-		
-		 /* Winding order: is the direction that our vertices are layout. */
+		// 0 - vertex           // colors
+		-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,
+		// 1 - vertex 
+		0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f,
+		// 2 - vertex 
+		-0.5f, 0.5f, 0.0f,      0.0f, 0.0f, 1.0f,
+		// 3 - vertex 
+		0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,
+		/* Winding order: is the direction that our vertices are layout. */
 	};
 
 	glCreateVertexArrays(1, &gVertexArrayObject);
 	glBindVertexArray(gVertexArrayObject);
-	
-	glCreateBuffers(1, &gVertexBufferObject);
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-	
-	glBufferData(GL_ARRAY_BUFFER, 
-			     vertexPosition.size() * sizeof(GLfloat), 
-			     vertexPosition.data(), 
-			     GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	glCreateBuffers(1, &gVertexBufferObject); 
+	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject); 
+	glBufferData(GL_ARRAY_BUFFER, vertexPosition.size() * sizeof(GLfloat), vertexPosition.data(), GL_STATIC_DRAW); 
+
+	// IBO
+	const std::vector<GLuint> indexSquare{ 0, 1, 2, 1, 3, 2 };
+	glCreateBuffers(1, &gIboSquare); 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIboSquare); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSquare.size() * sizeof(GLuint), indexSquare.data(), GL_STATIC_DRAW); 
+
+	// Attrib
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); 
+	glEnableVertexAttribArray(0); 
 	 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(sizeof(GL_FLOAT) * 3));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(sizeof(GL_FLOAT) * 3)); 
 	glEnableVertexAttribArray(1);
 
-	#if 0
-		glGenBuffers(1, &gColor);
-		glBindBuffer(GL_ARRAY_BUFFER ,gColor);
-		glBufferData(GL_ARRAY_BUFFER,
-					vertexColors.size() * sizeof(GLfloat),
-					vertexColors.data(),
-					GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1,
-							  3,
-							  GL_FLOAT,
-							  GL_FALSE,
-							  0,
-							  (void*)0);
-	#endif 
-
 	glBindVertexArray(0);
-	glDisableVertexAttribArray(0);
+	//glDisableVertexAttribArray(0);
 }
 
 void vertexDefineSquare();
@@ -161,28 +150,14 @@ void vertexDefineSquare()
 {
 	std::vector<GLfloat> vertexSquare{
 		 // vertex			   colors
-		 0.1f,  0.3f, 0.0f,	   0.5f,  0.0f, 1.0f,
-		 0.1f,  0.1f, 0.0f,	   0.5f,  0.0f, 0.0f,
-		 0.3f,  0.1f, 0.0f,	   0.0f,  0.0f, 0.0f,
-		 0.1f,  0.3f, 0.0f,    0.5f,  0.0f, 1.0f,
-		 0.3f,  0.1f, 0.0f,	   0.5f,  0.0f, 0.0f,
-		 0.3f,  0.3f, 0.0f,	   0.0f,  0.0f, 0.0f,
+		 0.1f,  0.3f, 0.0f,	   1.0f,  0.0f, 0.0f,
+		 0.1f,  0.1f, 0.0f,	   0.0f,  1.0f, 0.0f,
+		 0.3f,  0.1f, 0.0f,	   0.0f,  0.0f, 1.0f,
+		 0.1f,  0.3f, 0.0f,    1.0f,  0.0f, 0.0f,
+		 0.3f,  0.1f, 0.0f,	   0.0f,  1.0f, 1.0f,
+		 0.3f,  0.3f, 0.0f,	   0.0f,  0.0f, 1.0f,
 	};
 
-	glCreateVertexArrays(1, &gVertexArrayForSquare);
-	glBindVertexArray(gVertexArrayForSquare);
-
-	glCreateBuffers(1, &gVertexBufferForSquare);
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexArrayForSquare);
-	glBufferData(GL_ARRAY_BUFFER, vertexSquare.size() * sizeof(GLfloat), vertexSquare.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-
-	#if 0
 	glCreateVertexArrays(1, &gVertexArrayForSquare);
 	glBindVertexArray(gVertexArrayForSquare);
 
@@ -191,37 +166,15 @@ void vertexDefineSquare()
 	glBufferData(GL_ARRAY_BUFFER, vertexSquare.size() * sizeof(GLfloat), vertexSquare.data(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-	glCreateBuffers(1, &squareColorBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, squareColorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertexColors.size() * sizeof(GLfloat), vertexColors.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)0);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-
-	#endif 
-
-	#if 0 
-		// went wrong, back later.
-		glBindVertexArray(gVertexArrayObject);
-		glBindBuffer(GL_ARRAY_BUFFER, gColor);
-	
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1,
-								3, 
-			GL_FLOAT,
-			GL_FALSE,
-			0,
-			(void*)0);
-
-	#endif 
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 
 	glBindVertexArray(0);
-	glDisableVertexAttribArray(0);
+	//glDisableVertexAttribArray(0);
 }
 
-#if 1
 void InitializeProgram();
 void MainLoop();
 void MainLoop();
@@ -281,14 +234,13 @@ void PreDraw() {
 void Draw() {
 	glUseProgram(gGraphicsPipelineShaderProgram); 
 	glBindVertexArray(gVertexArrayObject); 
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject); 
-	glDrawArrays(GL_TRIANGLES, 0, 6); 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	 
-	glUseProgram(gSquareProgram);  
-	glBindVertexArray(gVertexArrayForSquare); 
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferForSquare); 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);   
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glUseProgram(gSquareProgram);   
+	glBindVertexArray(gVertexArrayForSquare);  
+	glDrawArrays(GL_TRIANGLES, 0, 6);  
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  
 }
 
 void MainLoop()
@@ -312,7 +264,6 @@ void CleanUp()
 
 	SDL_Quit();
 }
-#endif
 
 int main(int argc, char* argv[])
 {
