@@ -135,18 +135,17 @@
   <ItemGroup>
     <ClCompile Include="GLAD\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Window\keyboard.cpp" />
+    <ClCompile Include="Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLAD\include\glad\glad.h" />
     <ClInclude Include="GLAD\include\KHR\khrplatform.h" />
+    <ClInclude Include="Window\keyboard.h" />
+    <ClInclude Include="Window\window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="Shaders\squareFrag.glsl" />
-    <None Include="Shaders\squareVert.glsl" />
-    <None Include="Shaders\testVert.glsl" />
-    <None Include="Shaders\triangleFrag.glsl" />
-    <None Include="Shaders\triangleVert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

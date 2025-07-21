@@ -19,6 +19,12 @@
     <ClCompile Include="GLAD\src\glad.c">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+    <ClCompile Include="Window\window.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\keyboard.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLAD\include\glad\glad.h">
@@ -27,13 +33,14 @@
     <ClInclude Include="GLAD\include\KHR\khrplatform.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="Window\window.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\keyboard.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="Shaders\triangleVert.glsl" />
-    <None Include="Shaders\triangleFrag.glsl" />
-    <None Include="Shaders\squareVert.glsl" />
-    <None Include="Shaders\squareFrag.glsl" />
-    <None Include="Shaders\testVert.glsl" />
   </ItemGroup>
 </Project>
